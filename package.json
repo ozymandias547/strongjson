@@ -1,6 +1,6 @@
 {
   "name": "strongjson",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Library for creating documented, strongly-typed, & validated JSON.",
   "main": "src/index.js",
   "scripts": {
@@ -11,5 +11,5 @@
   "devDependencies": {
     "mocha": "^7.1.1"
   },
-  "repository": ""
+  "repository": "https://github.com/ozymandias547/strongjson"
 }
