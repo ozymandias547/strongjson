@@ -28,12 +28,14 @@ describe('Readme examples', function() {
       ))
     ))
 
-    HouseType.validate(house);
+    var resultsA = HouseType.validate(house);
     // { valid: true, errors: [] }
+
+    assert.equal(resultsA.valid, true);
 
     house.rooms[0].name = "unknown room";
 
-    var results = HouseType.validate(house);
+    var resultsB = HouseType.validate(house);
     // {
     //   valid: false,
     //   errors: [
@@ -45,7 +47,7 @@ describe('Readme examples', function() {
     //   ]
     // }
 
-    console.log(results);
+    assert.equal(resultsB.valid, false);
 
   });
 

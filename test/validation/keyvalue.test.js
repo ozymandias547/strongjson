@@ -41,7 +41,6 @@ describe('Types.Key valueTypes validation', function() {
 
     assert.equal(validation.valid, false);
     assert.equal(validation.errors.length, 1);
-    console.log(validation.errors[0]);
 
   });
 
@@ -71,5 +70,47 @@ describe('Types.Key valueTypes validation', function() {
 
   });
 
+  it('should fail if a shallow require is triggered and missing.', function() {
+
+    const MyType = StrongJSON.create(
+      Types.Object(
+        Types.Key("test",
+          Types.Object(
+            Types.Key("innertest", {required: true}, Types.String())
+          )
+        )
+      )
+    );
+
+    var validation1 = MyType.validate({
+      test: {}
+    });
+
+    assert.equal(validation1.valid, false);
+
+  });
+
+  it('should succeed if a shallow require is not in path.', function() {
+
+    const MyType = StrongJSON.create(
+      Types.Object(
+        Types.Key("test",
+          Types.Object(
+            Types.Key("innertest", {required: true}, Types.String())
+          )
+        )
+      )
+    );
+
+    var validation1 = MyType.validate({
+      test: {}
+    });
+
+    var validation2 = MyType.validate({});
+
+    assert.equal(validation1.valid, false);
+    assert.equal(validation2.valid, true);
+
+  });
 
 });

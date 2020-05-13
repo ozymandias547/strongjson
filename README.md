@@ -1,17 +1,16 @@
 StrongJSON
 ===========================
-Library for creating documented, strongly-typed, & validated JSON.
+Library for creating strongly-typed, validated, & documentable JSON.
 
 `npm install --save strongjson`
 
-
 ### Why StrongJSON
 
-Keeping track of JSON object properties, especially when they are nested and complex, can be hard.  This 
-library helps you define a JSON schema that gives you validation, defaults, options, and documentation 
-of large complex JSON objects or JS objects. 
+Keeping track of JSON object properties, especially when they are nested and complex, can be hard.  This
+library helps you define a JSON schema that gives you validation, options, and documentation
+of large complex JSON objects or JS objects.
 
-### Validating JSON:
+### Getting Started:
 ```js
 
 var StrongJSON = require('strongjson');
@@ -27,31 +26,33 @@ var HouseType = StrongJSON.create(Types.Object(
   ))
 ))
 
-var house = {
+const {valid, errors} = HouseType.validate({
   "address": "123, South Road", // full address of house.
-  "rooms": [                    // All the rooms in the house.
-    {
-      "name": "bedroom",        // Can be "bedroom", "bathroom", or "kitchen".
-      "area": 300               // Area in square feet
-    }
-  ]
-}
-HouseType.validate(house);
-// { valid: true, errors: [] }
+    "rooms": [                    // All the rooms in the house.
+      {
+        "name": "bedroom",        // Can be "bedroom", "bathroom", or "kitchen".
+        "area": 300               // Area in square feet
+      }
+    ]
+})
 
-house.rooms[0].name = "unknown room";
+console.log(valid)  // => True
+console.log(errors) // => []
 
-var results = HouseType.validate(house);
-// {
-//   valid: false,
-//   errors: [
-//     {
-//       errorKey: 'INVALID_OPTION',
-//       message: 'Invalid value 'unknown room\'. Expected one of the following: \'bedroom\', \'bathroom\', \'kitchen\'',
-//       schemaId: '[Object][Key rooms][Array][option 0][Object][Key name][string]'
-//     }
-//   ]
-// }
+// Trigger an error:
+house.rooms[0].name = "Not a room option";
+
+const {valid, errors} = HouseType.validate(house)
+
+console.log(valid) // => false
+console.log(errors)  // =>
+// errors: [
+//   {
+//     errorKey: 'INVALID_OPTION',
+//     message: 'Invalid value 'unknown room\'. Expected one of the following: \'bedroom\', \'bathroom\', \'kitchen\'',
+//     schemaId: '[Object][Key rooms][Array][option 0][Object][Key name][string]'
+//   }
+// ]
 ```
 
 ### Types
@@ -68,24 +69,76 @@ Types.Null();
 Types.Boolean();
 ```
 
-### Validation
+Type arguments can be in any order. For example, these are all the same:
 
-More details coming soon.
+```js
+Types.Key("myKey", {description: "My wonderful key"}, Types.String);
+Types.Key(Types.String, "myKey", {description: "My wonderful key"});
+Types.Key({description: "My wonderful key"}, Types.String, "myKey");
+```
+
+Types.Object() and Types.Array() can accept arrays of Types as type "options":
+
+```js
+Types.Key("myKey", [Types.String(), Types.Number()]);
+Types.Array([Types.String(), Types.Number()]);
+```
+
+### Requiring Existence of Object
+
+You can require the existence of Object.Key.
+
+```js
+var HouseType = StrongJSON.create(Types.Object(
+  Types.Key("address", Types.String(), { required: true }),
+))
+
+HouseType.validate({}).valid // false
+```
+
+Object.Key required is done "shallow", meaning if parent keys aren't required, then
+the validation will pass.  For example:
+
+```js
+const MyType = StrongJSON.create(
+  Types.Object(
+    Types.Key("outerKey",           // add {required: true} here if you want this to validate existence of the innerKey
+      Types.Object(
+        Types.Key("innerKey", {required: true}, Types.String())
+      )
+    )
+  )
+);
+
+HouseType.validate({}).valid // true
+```
+
+### Custom Validation
+
+In upcoming versions, custom validation will be allowed via passing curry'd functions
+into the options `validate' key:
+
+```js
+
+const minLength = (minLength) => (array) => array.length > minLength;
+
+const MyType = StrongJSON.create(
+  Types.Array({ validate: [ minLength(3) ] }, Types.Number())
+);
+
+HouseType.validate([1, 2]).valid   // false because it must be 3
+
+```
 
 ### Documenting & Generating Examples:
+
+In upcoming versions, you'll be able to set example values and generate example json.
 
 ```js
 HouseType.getExample();
 ```
 
 ---
-
-### Iterating:
-```js
-HouseType.forEach((node, parent) => {
-  // iteratively walk over the tree
-})
-```
 
 ### Serialization:
 
@@ -94,16 +147,4 @@ const HouseTypeJson = HouseType.serialize();   // Serializes to a string for sto
 const NewHouseType = StrongJSON.deserialize(HouseTypeJson)
 ```
 
-### Accessing & Mutating Type validation nodes:
-ted Type values is accomplished via an accessor string.
-
-```js
-const AddressStringType = HouseType.get('{}.address.<string>');
-AddressStringType.setOptions({required: true});
-
-const RoomType = HouseType.get('{}.rooms.[].0.{}');
-RoomType.add(Types.Key())
-```
-
-Accessing nes
 

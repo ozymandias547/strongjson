@@ -1,10 +1,10 @@
 {
   "name": "strongjson",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Library for creating documented, strongly-typed, & validated JSON.",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --recursive"
   },
   "author": "Joseph Jung",
   "license": "ISC",

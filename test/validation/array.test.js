@@ -50,7 +50,6 @@ describe('Array validation', function() {
 
     assert.equal(validation.valid, false);
     assert.equal(validation.errors.length, 1);
-    console.log(validation.errors);
 
   });
 
@@ -103,7 +102,6 @@ describe('Array validation', function() {
     });
 
     assert.equal(validation.valid, false);
-    console.log(validation.errors[0]);
 
   });
 

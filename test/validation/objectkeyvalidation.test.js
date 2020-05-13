@@ -48,8 +48,6 @@ describe('Types.Key validation', function() {
 
     assert.equal(validation.valid, false);
     assert(validation.errors.length === 1)
-    console.log(validation.errors[0]);
-    // assert(validation.errors[0] === ValidationErrorMessages["KEY_MISSING"]({id}, {key: "hi"}))
 
   });
 
@@ -91,7 +89,6 @@ describe('Types.Key validation', function() {
 
     assert.equal(validation.valid, false);
     assert(validation.errors.length === 1);
-    console.log(validation.errors[0]);
 
   });
 

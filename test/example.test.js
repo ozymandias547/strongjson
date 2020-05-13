@@ -23,8 +23,6 @@ describe('Generating example JSON', function() {
 
     const example = HouseType.getExample()
 
-    console.log(example);
-
   });
 
 });

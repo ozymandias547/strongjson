@@ -112,7 +112,6 @@ describe('Deep validation', function() {
     );
 
     assert.equal(validation.valid, false);
-    console.log(validation);
   });
 
 });
